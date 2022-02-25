@@ -4,7 +4,6 @@ from rest_framework import generics
 from locations.models import Location, FavoritePlace
 from obstacles.models import (
     Obstacle,
-    ObstaclePhoto,
     ObstacleComment,
 )
 
