@@ -31,6 +31,7 @@ class Obstacle(models.Model):
     )
     description = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=False)
+    last_modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -57,7 +58,7 @@ class UserObstacleComment(models.Model):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
-        editable=True,
+        editable=False,
     )
     obstacle = models.ForeignKey(Obstacle, on_delete=models.CASCADE)
     user = models.ForeignKey(

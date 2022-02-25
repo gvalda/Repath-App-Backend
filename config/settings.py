@@ -21,6 +21,7 @@ INSTALLED_APPS = [
 
     # 3rd party
     'rest_framework',
+    'django_filters',
 
     # Local
     'accounts',
@@ -37,6 +38,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+}
 
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',
