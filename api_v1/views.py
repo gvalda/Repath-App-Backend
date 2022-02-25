@@ -1,5 +1,12 @@
-from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics
+
+from locations.models import Location, FavoritePlace
+from obstacles.models import (
+    Obstacle,
+    UserObstacleComment,
+)
 
 from .serializers import (
     LocationSerializer,
@@ -7,11 +14,7 @@ from .serializers import (
     ObstacleSerializer,
     UserObstacleCommentSerializer,
 )
-from locations.models import Location, FavoritePlace
-from obstacles.models import (
-    Obstacle,
-    UserObstacleComment,
-)
+from .permissions import IsUserAuthor
 
 
 class LocationList(generics.ListCreateAPIView):
@@ -27,11 +30,21 @@ class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
 class FavoritePlaceList(generics.ListCreateAPIView):
     queryset = FavoritePlace.objects.all()
     serializer_class = FavoritePlaceSerializer
+    permission_classes = (
+        IsAuthenticated,
+    )
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
 
 
 class FavoritePlaceDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = FavoritePlace.objects.all()
     serializer_class = FavoritePlaceSerializer
+    permission_classes = (
+        IsAuthenticated,
+        IsAdminUser | IsUserAuthor
+    )
 
 
 class ObstacleList(generics.ListCreateAPIView):
