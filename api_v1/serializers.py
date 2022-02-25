@@ -4,8 +4,8 @@ from locations.models import Location, FavoritePlace
 from obstacles.models import (
     Obstacle,
     ObstaclePhoto,
-    UserObstacleComment,
-    UserObstacleCommentPhoto,
+    ObstacleComment,
+    ObstacleCommentPhoto,
 )
 
 
@@ -34,7 +34,26 @@ class FavoritePlaceSerializer(serializers.ModelSerializer):
         model = FavoritePlace
 
 
+class ImageUrlField(serializers.RelatedField):
+    def to_representation(self, instance):
+        url = instance.photo.url
+        request = self.context.get('request', None)
+        if request is not None:
+            return request.build_absolute_uri(url)
+        return url
+
+
 class ObstacleSerializer(serializers.ModelSerializer):
+    comments = serializers.HyperlinkedIdentityField(
+        many=True,
+        read_only=True,
+        view_name='user-comment-detail',
+    )
+    photos = ImageUrlField(
+        many=True,
+        read_only=True,
+    )
+
     class Meta:
         fields = (
             'id',
@@ -42,6 +61,8 @@ class ObstacleSerializer(serializers.ModelSerializer):
             'author',
             'type',
             'description',
+            'comments',
+            'photos',
             'is_active',
             'last_modified',
         )
@@ -52,7 +73,12 @@ class ObstacleSerializer(serializers.ModelSerializer):
         model = Obstacle
 
 
-class UserObstacleCommentSerializer(serializers.ModelSerializer):
+class ObstacleCommentSerializer(serializers.ModelSerializer):
+    photos = ImageUrlField(
+        many=True,
+        read_only=True,
+    )
+
     class Meta:
         fields = (
             'id',
@@ -60,9 +86,10 @@ class UserObstacleCommentSerializer(serializers.ModelSerializer):
             'user',
             'rating',
             'comment',
+            'photos',
             'last_modified',
         )
         read_only_fields = (
             'last_modified',
         )
-        model = UserObstacleComment
+        model = ObstacleComment

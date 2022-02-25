@@ -1,18 +1,18 @@
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 
 from locations.models import Location, FavoritePlace
 from obstacles.models import (
     Obstacle,
-    UserObstacleComment,
+    ObstaclePhoto,
+    ObstacleComment,
 )
 
 from .serializers import (
     LocationSerializer,
     FavoritePlaceSerializer,
     ObstacleSerializer,
-    UserObstacleCommentSerializer,
+    ObstacleCommentSerializer,
 )
 from .permissions import IsUserAuthor
 
@@ -58,14 +58,10 @@ class ObstacleDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class UserObstacleCommentList(generics.ListCreateAPIView):
-    queryset = UserObstacleComment.objects.all()
-    serializer_class = UserObstacleCommentSerializer
-    filter_backends = (DjangoFilterBackend,)
-    search_fields = ['obstacle']
+    queryset = ObstacleComment.objects.all()
+    serializer_class = ObstacleCommentSerializer
 
 
 class UserObstacleCommentDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = UserObstacleComment.objects.all()
-    serializer_class = UserObstacleCommentSerializer
-    filter_backends = (DjangoFilterBackend,)
-    search_fields = ['obstacle', 'pk']
+    queryset = ObstacleComment.objects.all()
+    serializer_class = ObstacleCommentSerializer

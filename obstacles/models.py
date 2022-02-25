@@ -1,22 +1,32 @@
 import os
 import uuid
-from django.db import models
+
 from django.contrib.auth import get_user_model
+from django.db import models
+
 from locations.models import Location
 
 
 def get_obstacle_photo_path(instance, filename):
-    return os.path.join('obstacles', instance.obstacle.id, 'images', filename)
+    return os.path.join('obstacles', str(instance.obstacle.id), 'images', filename)
 
 
 def get_obstacle_comment_photo_path(instance, filename):
-    return os.path.join('obstacles', instance.user_obstacle_comment.obstacle.id, 'comments', instance.user_obstacle_comment.id, 'images', filename)
+    obstacle_comment = instance.obstacle_comment
+    return os.path.join(
+        'obstacles',
+        str(obstacle_comment.obstacle.id),
+        'comments',
+        str(obstacle_comment.id),
+        'images',
+        filename
+    )
 
 
 class Obstacle(models.Model):
     class ObstacleType(models.TextChoices):
-        Error = '-1' 'Error'
-        Pothole = '0' 'Pothole'
+        Error = 'Error'
+        Pothole = 'Pothole'
 
     id = models.UUIDField(
         primary_key=True,
@@ -44,7 +54,8 @@ class ObstaclePhoto(models.Model):
         default=uuid.uuid4,
         editable=False,
     )
-    obstacle = models.ForeignKey(Obstacle, on_delete=models.CASCADE)
+    obstacle = models.ForeignKey(
+        Obstacle, on_delete=models.CASCADE, related_name='photos')
     photo = models.ImageField(
         upload_to=get_obstacle_photo_path,
         default='images/default.jpg'
@@ -54,13 +65,14 @@ class ObstaclePhoto(models.Model):
         return f'{self.obstacle}'
 
 
-class UserObstacleComment(models.Model):
+class ObstacleComment(models.Model):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
     )
-    obstacle = models.ForeignKey(Obstacle, on_delete=models.CASCADE)
+    obstacle = models.ForeignKey(
+        Obstacle, on_delete=models.CASCADE, related_name='comments')
     user = models.ForeignKey(
         get_user_model(), on_delete=models.SET_NULL, null=True)
     rating = models.IntegerField()
@@ -72,18 +84,19 @@ class UserObstacleComment(models.Model):
         return f'{self.obstacle} : {self.user} : {self.comment}'
 
 
-class UserObstacleCommentPhoto(models.Model):
+class ObstacleCommentPhoto(models.Model):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
     )
-    user_obstacle_comment = models.ForeignKey(
-        UserObstacleComment, on_delete=models.CASCADE)
+    obstacle_comment = models.ForeignKey(
+        ObstacleComment, on_delete=models.CASCADE, related_name='photos')
     photo = models.ImageField(
         upload_to=get_obstacle_comment_photo_path,
-        default='images/default.jpg'
+        default='images/default.jpg',
+        max_length=255
     )
 
     def __str__(self):
-        return f'{self.user_obstacle_comment}'
+        return f'{self.obstacle_comment}'
