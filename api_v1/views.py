@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import generics
 
@@ -8,12 +9,21 @@ from obstacles.models import (
 )
 
 from .serializers import (
+    RegisterSerializer,
     LocationSerializer,
     FavoritePlaceSerializer,
     ObstacleSerializer,
     ObstacleCommentSerializer,
 )
 from .permissions import IsUserAuthor
+
+
+User = get_user_model()
+
+
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = RegisterSerializer
 
 
 class LocationList(generics.ListCreateAPIView):
