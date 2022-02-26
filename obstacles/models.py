@@ -26,6 +26,7 @@ def get_obstacle_comment_photo_path(instance, filename):
 class Obstacle(models.Model):
     class ObstacleType(models.TextChoices):
         Error = 'Error'
+        Obstacle = 'Obstacle'
         Pothole = 'Pothole'
 
     id = models.UUIDField(
@@ -33,14 +34,22 @@ class Obstacle(models.Model):
         default=uuid.uuid4,
         editable=False,
     )
-    location = models.ForeignKey(Location, on_delete=models.CASCADE)
+    location = models.ForeignKey(
+        Location,
+        on_delete=models.CASCADE,
+        # editable=False,
+    )
     author = models.ForeignKey(
-        get_user_model(), on_delete=models.SET_NULL, null=True)
+        get_user_model(),
+        on_delete=models.SET_NULL,
+        null=True,
+        editable=False,
+    )
     type = models.CharField(
-        max_length=10, choices=ObstacleType.choices, default=ObstacleType.Error
+        max_length=10, choices=ObstacleType.choices, default=ObstacleType.Obstacle
     )
     description = models.TextField(null=True, blank=True)
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     last_modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
@@ -73,7 +82,7 @@ class ObstacleComment(models.Model):
     )
     obstacle = models.ForeignKey(
         Obstacle, on_delete=models.CASCADE, related_name='comments')
-    user = models.ForeignKey(
+    author = models.ForeignKey(
         get_user_model(), on_delete=models.SET_NULL, null=True)
     rating = models.IntegerField()
     comment = models.TextField(null=True, blank=True)

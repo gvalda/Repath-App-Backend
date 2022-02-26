@@ -22,7 +22,7 @@ class ObstacleAdmin(admin.ModelAdmin):
         'is_active',
         'type',
     )
-    readonly_fields = ('created', 'last_modified')
+    readonly_fields = ('author', 'location', 'created', 'last_modified')
 
 
 class ObstacleCommentPhotoInline(admin.TabularInline):
@@ -36,7 +36,7 @@ class ObstacleCommentAdmin(admin.ModelAdmin):
     ]
     list_display = [
         'get_obstacle',
-        'user',
+        'author',
         'rating',
     ]
 

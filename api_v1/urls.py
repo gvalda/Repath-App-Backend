@@ -6,6 +6,7 @@ from rest_framework_simplejwt.views import (
 
 from .views import (
     RegisterView,
+    UserDetail,
     LocationList,
     LocationDetail,
     FavoritePlaceList,
@@ -30,6 +31,7 @@ urlpatterns = [
     path('users/', RegisterView.as_view(), name='auth-register'),
     path('users/token/', TokenObtainPairView.as_view(), name='token-obtain-pair'),
     path('users/token/refresh/', TokenRefreshView.as_view(), name='token-refresh'),
+    path('users/<str:email>/', UserDetail.as_view(), name='user-detail'),
     path('users/favorites/', FavoritePlaceList.as_view(),
          name='user-favorite-place-list'),
     path('users/favorites/<uuid:pk>/', FavoritePlaceDetail.as_view(),

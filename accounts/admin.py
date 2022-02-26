@@ -20,6 +20,7 @@ class UserAdmin(UserAdmin):
     )
     fieldsets = ((None, {'fields': ('email',
                                     'username',)}),
+                 ('Avatar', {'fields': ('avatar',)}),
                  ('State', {'fields': ('is_active',
                                        'is_admin',)}),
                  (None, {'fields': ('date_joined',)}),

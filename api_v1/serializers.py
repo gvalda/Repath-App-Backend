@@ -1,3 +1,5 @@
+from dataclasses import fields
+from email.policy import default
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import get_user_model
 from rest_framework.validators import UniqueValidator
@@ -39,6 +41,24 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
 
         return user
+
+
+class UserSerializer(serializers.ModelSerializer):
+    avatar = serializers.ImageField(max_length=50)
+
+    class Meta:
+        fields = (
+            'email',
+            'username',
+            'avatar',
+            'is_active',
+            'date_joined'
+        )
+        read_only_fields = (
+            'is_active',
+            'date_joined',
+        )
+        model = User
 
 
 class LocationSerializer(serializers.ModelSerializer):
@@ -85,11 +105,17 @@ class ObstacleSerializer(serializers.ModelSerializer):
         many=True,
         read_only=True,
     )
+    author_id = serializers.HiddenField(
+        source='author',
+        default=serializers.CurrentUserDefault(),
+    )
+    author = serializers.CharField(source='author.email', read_only=True)
 
     class Meta:
         fields = (
             'id',
             'location',
+            'author_id',
             'author',
             'type',
             'description',
@@ -105,17 +131,32 @@ class ObstacleSerializer(serializers.ModelSerializer):
         model = Obstacle
 
 
+class ObstacleWithoutLocationSerializer(ObstacleSerializer):
+    class Meta(ObstacleSerializer.Meta):
+        read_only_fields = (
+            'location',
+            'is_active',
+            'last_modified',
+        )
+
+
 class ObstacleCommentSerializer(serializers.ModelSerializer):
     photos = ImageUrlField(
         many=True,
         read_only=True,
     )
+    author_id = serializers.HiddenField(
+        source='author',
+        default=serializers.CurrentUserDefault(),
+    )
+    author = serializers.CharField(source='author.email', read_only=True)
 
     class Meta:
         fields = (
             'id',
             'obstacle',
-            'user',
+            'author_id',
+            'author',
             'rating',
             'comment',
             'photos',
