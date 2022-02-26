@@ -37,7 +37,6 @@ class Obstacle(models.Model):
     location = models.ForeignKey(
         Location,
         on_delete=models.CASCADE,
-        # editable=False,
     )
     author = models.ForeignKey(
         get_user_model(),

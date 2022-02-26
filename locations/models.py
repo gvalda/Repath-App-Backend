@@ -25,7 +25,6 @@ class FavoritePlace(models.Model):
     )
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    last_modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
