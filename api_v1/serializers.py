@@ -96,11 +96,11 @@ class ImageUrlField(serializers.RelatedField):
 
 
 class ObstacleSerializer(serializers.ModelSerializer):
-    comments = serializers.HyperlinkedIdentityField(
-        many=True,
-        read_only=True,
-        view_name='comment-detail',
-    )
+    # comments = serializers.HyperlinkedIdentityField(
+    #     many=True,
+    #     read_only=True,
+    #     view_name='comment-detail',
+    # )
     photos = ImageUrlField(
         many=True,
         read_only=True,
@@ -110,7 +110,6 @@ class ObstacleSerializer(serializers.ModelSerializer):
         default=serializers.CurrentUserDefault(),
     )
     author = serializers.CharField(source='author.email', read_only=True)
-    # location = serializers.SerializerMethodField('get_location')
     location = LocationSerializer()
 
     class Meta:
@@ -137,17 +136,6 @@ class ObstacleSerializer(serializers.ModelSerializer):
         location = Location.objects.create(**location_data)
         obstacle = Obstacle.objects.create(location=location, **validated_data)
         return obstacle
-
-    # def get_location(self, obj):
-    #     print("#####\n\n\n\n\n\n\n\n\n\n\n\n")
-    #     location = obj.location
-    #     serializer_context = {
-    #         'request': self.context.get('request', None),
-    #         'location_id': obj.id
-    #     }
-    #     print(obj.id)
-    #     serializer = LocationSerializer(location, context=serializer_context)
-    #     return serializer.data
 
 
 class ObstacleWithoutLocationSerializer(ObstacleSerializer):
