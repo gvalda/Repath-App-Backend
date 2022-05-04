@@ -128,6 +128,7 @@ class ObstacleSerializer(serializers.ModelSerializer):
         read_only_fields = (
             'is_active',
             'last_modified',
+            'comments',
         )
         model = Obstacle
 
