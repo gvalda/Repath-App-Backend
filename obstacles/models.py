@@ -89,7 +89,7 @@ class ObstacleComment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.obstacle} : {self.user} : {self.comment}'
+        return f'{self.obstacle} : {self.author} : {self.comment}'
 
 
 class ObstacleCommentPhoto(models.Model):
